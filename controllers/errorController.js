@@ -1,4 +1,4 @@
-const AppError = require('../util/appError');
+const AppError = require('../util/AppError');
 
 // BUILDING VALIDATION ERROR
 const handleValidationErrorDB = error => {
