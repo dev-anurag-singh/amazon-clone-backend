@@ -40,6 +40,10 @@ app.use(express.json());
 
 // ROUTES
 
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome</h1>');
+});
+
 app.use('/api/v1/products', productRouter);
 
 // Route for unmached Request
