@@ -27,6 +27,17 @@ exports.aliasTopProducts = (req, res, next) => {
   next();
 };
 
+exports.aliasMostValuedProducts = (req, res, next) => {
+  // REMOVING ANY UNCESSARY QUERIES
+
+  req.query = {};
+
+  // ADDING SORTING QUERY BASED ON PRICE
+
+  req.query.sort = 'price,-ratingsAverage';
+  next();
+};
+
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   // FINDING DOCUMENT AND ADDING QUERIES
 
@@ -35,6 +46,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
     .sort()
     .pagination().query;
 
+  // SENDING RESPONSE
   res.status(200).json({
     results: doc.length,
     status: 'success',
