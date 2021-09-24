@@ -56,14 +56,14 @@ const productSchema = new mongoose.Schema({
   images: [String],
 });
 
-// productSchema.pre('save', function (next) {
-//   this.ratingsAverage = 0;
-//   this.ratingsCount = 0;
-//   next();
-// });
-
 productSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// REMOVING __v
+productSchema.pre(/^find/, function (next) {
+  this.select('-__v');
   next();
 });
 

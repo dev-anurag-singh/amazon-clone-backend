@@ -1,6 +1,7 @@
 const Product = require('../models/productModel');
 const catchAsync = require('../util/catchAsync');
 const features = require('../util/ApiFeatures');
+const AppError = require('../util/AppError');
 
 // MIDDLEWARES TO ADD SORTING QUERY TO THE REQUEST
 
@@ -37,6 +38,25 @@ exports.aliasMostValuedProducts = (req, res, next) => {
   req.query.sort = 'price,-ratingsAverage';
   next();
 };
+
+//GET A SINGLE PRODUCT CONTROLLER
+
+exports.getProduct = catchAsync(async (req, res, next) => {
+  // QUERY THE DB WITH ID FOR THE PRODUCT
+  const doc = await Product.findById(req.params.id);
+
+  // SENDING ERROR IF THERE IS NO DATA IN DB WITH THIS ID
+  if (!doc) {
+    return next(new AppError('No Product found with this Id', 404));
+  }
+  // SENDING RESPONSE
+  res.status(200).json({
+    status: 'success',
+    data: doc,
+  });
+});
+
+// GET ALL PRODUCTS CONTROLLER
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   // FINDING DOCUMENT AND ADDING QUERIES
