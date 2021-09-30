@@ -61,6 +61,11 @@ productSchema.pre('save', function (next) {
   next();
 });
 
+productSchema.pre('save', function (next) {
+  this.description = this.description.slice(0, 400);
+  next();
+});
+
 // REMOVING __v
 productSchema.pre(/^find/, function (next) {
   this.select('-__v');
