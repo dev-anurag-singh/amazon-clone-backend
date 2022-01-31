@@ -10,6 +10,8 @@ const AppError = require('./util/AppError');
 const globalErrorHandler = require('./controllers/errorController.js');
 const productRouter = require('./routes/productRoutes');
 
+console.log(process.env.NODE_ENV);
+
 // Allow access to * origin
 app.use(cors());
 

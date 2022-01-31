@@ -39,6 +39,25 @@ exports.aliasMostValuedProducts = (req, res, next) => {
   next();
 };
 
+// MIDDLEWARE TO ADD SEARCH QUERY TO THE GET ALL PRODUCTS CONTROLLER
+
+exports.addSearchTerm = (req, res, next) => {
+  let searchTerms = { ...req.query };
+  // CONVERTING SEARCH QUERY INTO ARRAY
+  searchTerms = searchTerms.q.split(' ');
+
+  // BUILDING SEARCH QUERY
+  let query = [];
+
+  searchTerms.forEach(el => {
+    query.push({ category: el });
+  });
+  // ADDING SEARCH QUERY TO REQUEST
+  req.search = query;
+
+  next();
+};
+
 //GET A SINGLE PRODUCT CONTROLLER
 
 exports.getProduct = catchAsync(async (req, res, next) => {
@@ -59,12 +78,24 @@ exports.getProduct = catchAsync(async (req, res, next) => {
 // GET ALL PRODUCTS CONTROLLER
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
+  // ADDING SEARCH TERMS INTO THE QUERY
+
+  let search;
+  if (req.search) {
+    search = { $or: req.search };
+  }
+
   // FINDING DOCUMENT AND ADDING QUERIES
 
-  const doc = await new features(Product.find(), req.query)
+  const doc = await new features(Product.find(search), req.query)
     .filter()
     .sort()
     .pagination().query;
+
+  // SENDING ERROR IF NO PRODUCT IS FOUND
+  if (!doc.length) {
+    return next(new AppError('Sorry no product found', 404));
+  }
 
   // SENDING RESPONSE
   res.status(200).json({
